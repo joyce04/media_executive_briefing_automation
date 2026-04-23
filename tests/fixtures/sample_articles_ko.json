@@ -1,0 +1,42 @@
+[
+  {
+    "source_id": "naver_news",
+    "source_language": "ko",
+    "url": "https://sports.naver.com/football/article/001",
+    "title": "한국 축구 국가대표팀, 태국에 3-0 대승",
+    "summary_from_source": "한국 축구 국가대표팀이 2026 아시안컵 예선에서 태국을 3-0으로 격파했다. 손흥민이 멀티골을 기록하며 팀의 압도적인 승리를 이끌었고, 황희찬도 추가골을 넣으며 활약했다. 이번 승리로 한국은 예선 1위를 굳혔다.",
+    "published_at": "2026-03-07T10:00:00"
+  },
+  {
+    "source_id": "yonhap_sports",
+    "source_language": "ko",
+    "url": "https://www.yna.co.kr/view/AKR20260307001",
+    "title": "대한축구협회, 새 기술위원장에 홍명보 전 감독 선임",
+    "summary_from_source": "대한축구협회(KFA)가 7일 새 기술위원장으로 홍명보 전 국가대표팀 감독을 선임했다고 공식 발표했다. 홍 신임 위원장은 2026 북중미 월드컵 이후 한국 축구의 중장기 발전 전략을 수립하는 역할을 맡게 된다. KFA는 홍 위원장의 임기를 4년으로 확정했다.",
+    "published_at": "2026-03-07T09:30:00"
+  },
+  {
+    "source_id": "kbs_sports",
+    "source_language": "ko",
+    "url": "https://sports.kbs.co.kr/news/view/2026/03/07/002",
+    "title": "이강인, 파리 생제르맹에서 레알 마드리드 이적 공식 확정",
+    "summary_from_source": "한국 대표팀 미드필더 이강인이 파리 생제르맹(PSG)에서 레알 마드리드로의 이적을 공식 확정했다고 양 구단이 7일 밝혔다. 이적료는 약 8000만 유로로 알려졌으며, 이강인은 5년 계약에 서명했다. 이는 한국 선수 역사상 최고액 이적 기록이다.",
+    "published_at": "2026-03-07T08:15:00"
+  },
+  {
+    "source_id": "mbc_sports",
+    "source_language": "ko",
+    "url": "https://imnews.imbc.com/sports/football/2026/03/07/003",
+    "title": "전북 현대, K리그1 개막전에서 울산 HD에 2-1 역전승",
+    "summary_from_source": "2026 K리그1 개막전에서 전북 현대가 숙적 울산 HD를 2-1로 역전 제압했다. 전반 울산에 먼저 실점한 전북은 후반 들어 구스타보와 문선민의 연속골로 극적인 역전에 성공했다. 전주 월드컵경기장에는 4만 2천여 명의 관중이 입장해 열띤 응원을 펼쳤다.",
+    "published_at": "2026-03-07T22:00:00"
+  },
+  {
+    "source_id": "sbs_sports",
+    "source_language": "ko",
+    "url": "https://sports.sbs.co.kr/news/2026/03/07/004",
+    "title": "KFA 유소년 육성 프로그램 '드림팀', 전국 12개 도시로 확대",
+    "summary_from_source": "대한축구협회(KFA)가 유소년 축구 육성을 위한 '드림팀 프로젝트'를 기존 6개 도시에서 12개 도시로 확대한다고 발표했다. 이 프로그램은 만 10~15세 유망주를 대상으로 엘리트 트레이닝과 학업을 병행하는 방식으로 운영된다. KFA는 올해 약 500명의 신규 선수를 선발할 예정이다.",
+    "published_at": "2026-03-07T11:45:00"
+  }
+]

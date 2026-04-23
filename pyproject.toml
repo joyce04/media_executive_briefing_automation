@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "media-intel"
+version = "0.2.0"
+description = "Multi-tenant daily media intelligence briefing pipeline"
+requires-python = ">=3.13"
+dependencies = [
+    # LangGraph + LangChain
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "langchain-openai>=0.2.0",
+    # Data collection
+    "feedparser>=6.0.11",
+    "httpx>=0.27.0",
+    # Config + validation
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.6.0",
+    # Scheduling
+    "apscheduler>=3.10.4",
+    # Reporting
+    "jinja2>=3.1.4",
+    "weasyprint>=62.3",
+    # Utilities
+    "python-dotenv>=1.0.1",
+    "structlog>=24.4.0",
+    "langgraph-checkpoint-sqlite>=3.0.3",
+]
+
+# uv dependency groups (preferred over [project.optional-dependencies] with uv)
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-httpx>=0.32.0",
+    "pytest-cov>=6.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["agents", "collectors", "config", "database", "models", "pipeline",
+            "reports", "scripts"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-httpx>=0.32.0",
+    "pytest-cov>=6.0.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

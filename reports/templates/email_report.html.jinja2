@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="{{ org.language_primary | default('en') }}">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>{{ org.name_short | default('Daily') }} Daily Briefing — {{ run_date }}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:'Malgun Gothic','Apple SD Gothic Neo',Arial,sans-serif;font-size:14px;color:#222222;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f5;">
+<tr>
+<td align="center" style="padding:20px 10px;">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- OUTER WRAPPER                                          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <table width="680" cellpadding="0" cellspacing="0" border="0" style="max-width:680px;width:100%;">
+
+    <!-- ── HEADER ── -->
+    <tr>
+      <td style="background-color:{{ org.primary_color | default('#1a56db') }};padding:28px 32px 22px 32px;border-radius:6px 6px 0 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">{{ org.name | default('') }}</div>
+              <div style="font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">Daily Briefing</div>
+              <div style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.75);margin-top:4px;">Media Intelligence Report</div>
+            </td>
+            <td align="right" valign="top">
+              <div style="background-color:{{ org.secondary_color | default('#1e429f') }};border-radius:4px;padding:10px 16px;display:inline-block;text-align:right;">
+                <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:2px;">Report Date</div>
+                <div style="font-size:18px;font-weight:700;color:#ffffff;">{{ run_date }}</div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- ── STATS BAR ── -->
+    <tr>
+      <td style="background-color:{{ org.secondary_color | default('#1e429f') }};padding:12px 32px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td align="center" style="color:#ffffff;border-right:1px solid rgba(255,255,255,0.2);padding:0 12px;">
+              <div style="font-size:22px;font-weight:700;">{{ total_analyzed }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);">Total</div>
+            </td>
+            <td align="center" style="color:#ffffff;border-right:1px solid rgba(255,255,255,0.2);padding:0 12px;">
+              <div style="font-size:22px;font-weight:700;color:#66ccff;">{{ new_count }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);">New</div>
+            </td>
+            <td align="center" style="color:#ffffff;border-right:1px solid rgba(255,255,255,0.2);padding:0 12px;">
+              <div style="font-size:22px;font-weight:700;color:#ffcc44;">{{ developing_count }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);">Developing</div>
+            </td>
+            <td align="center" style="color:#ffffff;border-right:1px solid rgba(255,255,255,0.2);padding:0 12px;">
+              <div style="font-size:22px;font-weight:700;color:#aaaaaa;">{{ continuing_count }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);">Continuing</div>
+            </td>
+            <td align="center" style="color:#ffffff;padding:0 12px;">
+              <div style="font-size:22px;font-weight:700;color:#88cc88;">{{ resolved_count }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);">Resolved</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- ── WHITE CONTENT AREA ── -->
+    <tr>
+      <td style="background-color:#ffffff;padding:28px 32px;border-radius:0 0 6px 6px;">
+
+        <!-- ── EXECUTIVE SUMMARY ── -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid {{ org.primary_color | default('#1a56db') }};padding-bottom:6px;margin-bottom:14px;">
+              <span style="font-size:16px;font-weight:700;color:{{ org.primary_color | default('#1a56db') }};">Executive Summary</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:14px;">
+
+              {% if executive_summary %}
+              <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.75;color:#222222;">
+                {% for item in executive_summary %}
+                <li style="margin-bottom:5px;">{{ item }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {% if executive_summary_en and executive_summary_en != executive_summary %}
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eeeeee;">
+                <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.7;color:#555555;font-style:italic;">
+                  {% for item in executive_summary_en %}
+                  <li style="margin-bottom:4px;">{{ item }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+
+            </td>
+          </tr>
+        </table>
+
+        <!-- ── TRENDING NARRATIVES ── -->
+        {% if trending_narratives %}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid {{ org.primary_color | default('#1a56db') }};padding-bottom:6px;">
+              <span style="font-size:16px;font-weight:700;color:{{ org.primary_color | default('#1a56db') }};">Top Trending Narratives</span>
+            </td>
+          </tr>
+          {% for narrative in trending_narratives %}
+          <tr>
+            <td style="padding:14px 0 0 0;border-bottom:1px solid #eeeeee;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="padding-bottom:12px;">
+                <tr>
+                  <td valign="top" width="28">
+                    <div style="background-color:{{ org.primary_color | default('#1a56db') }};color:#ffffff;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;">{{ loop.index }}</div>
+                  </td>
+                  <td valign="top" style="padding-left:8px;">
+                    <div style="font-size:14px;font-weight:700;color:#222222;margin-bottom:2px;">{{ narrative.title | default('') }}</div>
+                    {% if narrative.description %}
+                    <div style="font-size:13px;color:#333333;line-height:1.5;margin-bottom:4px;">{{ narrative.description }}</div>
+                    {% endif %}
+                    {% if narrative.supporting_articles %}
+                    <div style="margin-top:6px;">
+                      {% for art in narrative.supporting_articles %}
+                      <div style="font-size:11px;color:#888888;margin-bottom:2px;">
+                        &#8227; <a href="{{ art.url }}" style="color:{{ org.primary_color | default('#1a56db') }};text-decoration:none;">{{ art.title }}</a>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% elif narrative.article_count is defined %}
+                    <div style="font-size:11px;color:#888888;">Articles: {{ narrative.article_count }}</div>
+                    {% endif %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+
+        <!-- ── NEW ARTICLES ── -->
+        {% if new_articles %}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid {{ org.primary_color | default('#1a56db') }};padding-bottom:6px;">
+              <span style="font-size:16px;font-weight:700;color:{{ org.primary_color | default('#1a56db') }};">[NEW]</span>
+              <span style="font-size:13px;color:#666666;margin-left:8px;">{{ new_count }} articles</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:14px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr style="background-color:{{ org.primary_color | default('#1a56db') }};">
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:left;width:45%;">Title</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:left;width:40%;">Summary</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:center;width:8%;">Risk</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:center;width:7%;">Score</th>
+                </tr>
+                {% for article in new_articles %}
+                <tr style="background-color:{% if loop.index is odd %}#f9f9f9{% else %}#ffffff{% endif %};">
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;font-size:13px;">
+                    {% if article.url %}
+                    <a href="{{ article.url }}" style="color:{{ org.primary_color | default('#1a56db') }};text-decoration:none;font-weight:600;">{{ article.title }}</a>
+                    {% else %}
+                    <span style="font-weight:600;color:#222222;">{{ article.title }}</span>
+                    {% endif %}
+                    {% if article.published_at %}
+                    <div style="font-size:11px;color:#888888;margin-top:3px;">{{ article.published_at }}</div>
+                    {% endif %}
+                  </td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;font-size:12px;color:#333333;line-height:1.5;">{{ article.summary_primary | default('') }}</td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;text-align:center;">
+                    {% set risk = article.risk_flag | default('neutral') | lower %}
+                    {% if risk == 'crisis' %}
+                      <span style="color:#CC0000;font-weight:700;font-size:11px;">&#9888; Crisis</span>
+                    {% elif risk == 'concern' %}
+                      <span style="color:#CC6600;font-weight:700;font-size:11px;">&#9650; Concern</span>
+                    {% elif risk == 'opportunity' %}
+                      <span style="color:#006633;font-weight:700;font-size:11px;">&#9654; Opp.</span>
+                    {% else %}
+                      <span style="color:#888888;font-size:11px;">— Neutral</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;text-align:center;">
+                    {% set score = article.relevance_score | default(5) | int %}
+                    {% if score >= 8 %}
+                      <span style="color:{{ org.primary_color | default('#1a56db') }};font-weight:700;font-size:13px;">{{ score }}</span>
+                    {% elif score >= 5 %}
+                      <span style="color:#555555;font-size:13px;">{{ score }}</span>
+                    {% else %}
+                      <span style="color:#aaaaaa;font-size:13px;">{{ score }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+            </td>
+          </tr>
+        </table>
+        {% endif %}
+
+        <!-- ── DEVELOPING ARTICLES ── -->
+        {% if developing_articles %}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid #CC6600;padding-bottom:6px;">
+              <span style="font-size:16px;font-weight:700;color:#CC6600;">[DEVELOPING]</span>
+              <span style="font-size:13px;color:#666666;margin-left:8px;">{{ developing_count }} articles</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:14px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr style="background-color:#CC6600;">
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:left;width:35%;">Title</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:left;width:35%;">Summary (Primary)</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:left;width:20%;">Summary (Secondary)</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:center;width:5%;">Risk</th>
+                  <th style="color:#ffffff;font-size:11px;font-weight:700;padding:8px 10px;text-align:center;width:5%;">Score</th>
+                </tr>
+                {% for article in developing_articles %}
+                <tr style="background-color:{% if loop.index is odd %}#fffaf5{% else %}#ffffff{% endif %};">
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;font-size:13px;">
+                    {% if article.url %}
+                    <a href="{{ article.url }}" style="color:{{ org.primary_color | default('#1a56db') }};text-decoration:none;font-weight:600;">{{ article.title }}</a>
+                    {% else %}
+                    <span style="font-weight:600;">{{ article.title }}</span>
+                    {% endif %}
+                    {% if article.published_at %}
+                    <div style="font-size:11px;color:#888888;margin-top:3px;">{{ article.published_at }}</div>
+                    {% endif %}
+                    {% if article.days_active and article.days_active > 1 %}
+                    <div style="font-size:11px;color:#CC6600;margin-top:2px;">Day {{ article.days_active }}</div>
+                    {% endif %}
+                  </td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;font-size:12px;color:#333333;line-height:1.5;">{{ article.summary_primary | default('') }}</td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;font-size:11px;color:#555555;font-style:italic;line-height:1.4;">{{ article.summary_secondary | default('') }}</td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;text-align:center;">
+                    {% set risk = article.risk_flag | default('neutral') | lower %}
+                    {% if risk == 'crisis' %}
+                      <span style="color:#CC0000;font-weight:700;font-size:11px;">&#9888; Crisis</span>
+                    {% elif risk == 'concern' %}
+                      <span style="color:#CC6600;font-weight:700;font-size:11px;">&#9650; Concern</span>
+                    {% elif risk == 'opportunity' %}
+                      <span style="color:#006633;font-weight:700;font-size:11px;">&#9654; Opp.</span>
+                    {% else %}
+                      <span style="color:#888888;font-size:11px;">— Neutral</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding:10px;border-bottom:1px solid #eeeeee;vertical-align:top;text-align:center;">
+                    {% set score = article.relevance_score | default(5) | int %}
+                    {% if score >= 8 %}
+                      <span style="color:{{ org.primary_color | default('#1a56db') }};font-weight:700;font-size:13px;">{{ score }}</span>
+                    {% elif score >= 5 %}
+                      <span style="color:#555555;font-size:13px;">{{ score }}</span>
+                    {% else %}
+                      <span style="color:#aaaaaa;font-size:13px;">{{ score }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+            </td>
+          </tr>
+        </table>
+        {% endif %}
+
+        <!-- ── CONTINUING ARTICLES ── -->
+        {% if continuing_articles %}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid #888888;padding-bottom:6px;">
+              <span style="font-size:16px;font-weight:700;color:#555555;">[CONTINUING]</span>
+              <span style="font-size:13px;color:#666666;margin-left:8px;">{{ continuing_count }} articles — detailed analysis omitted</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:12px;">
+              {% for article in continuing_articles %}
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:4px;">
+                <tr>
+                  <td style="padding:6px 0;border-bottom:1px solid #eeeeee;font-size:12px;color:#555555;">
+                    <span style="color:#888888;margin-right:8px;">{{ loop.index }}.</span>
+                    {% if article.url %}
+                    <a href="{{ article.url }}" style="color:#444444;text-decoration:none;">{{ article.title }}</a>
+                    {% else %}
+                    {{ article.title }}
+                    {% endif %}
+                    <span style="color:#aaaaaa;font-size:11px;margin-left:8px;">— Day {{ article.days_active | default(1) }}</span>
+                  </td>
+                </tr>
+              </table>
+              {% endfor %}
+            </td>
+          </tr>
+        </table>
+        {% endif %}
+
+        <!-- ── RESOLVED ARTICLES ── -->
+        {% if resolved_articles %}
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="border-bottom:2px solid #006633;padding-bottom:6px;">
+              <span style="font-size:16px;font-weight:700;color:#006633;">[RESOLVED]</span>
+              <span style="font-size:13px;color:#666666;margin-left:8px;">{{ resolved_count }} articles</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:12px;">
+              {% for article in resolved_articles %}
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:4px;">
+                <tr>
+                  <td style="padding:6px 0;border-bottom:1px solid #eeeeee;font-size:12px;color:#888888;">
+                    <span style="margin-right:8px;">{{ loop.index }}.</span>
+                    {% if article.url %}
+                    <a href="{{ article.url }}" style="color:#888888;text-decoration:none;">{{ article.title }}</a>
+                    {% else %}
+                    {{ article.title }}
+                    {% endif %}
+                    <span style="color:#aaaaaa;font-size:11px;margin-left:8px;">— closed after {{ article.days_active | default(1) }}d</span>
+                  </td>
+                </tr>
+              </table>
+              {% endfor %}
+            </td>
+          </tr>
+        </table>
+        {% endif %}
+
+      </td>
+    </tr>
+
+    <!-- ── FOOTER ── -->
+    <tr>
+      <td style="background-color:#eeeeee;padding:16px 32px;border-top:1px solid #dddddd;border-radius:0 0 6px 6px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="font-size:11px;color:#888888;line-height:1.6;">
+              {{ org.name | default('Media Intelligence') }} Daily Briefing<br />
+              This report was automatically generated.<br />
+              Generated: {{ run_date }} &nbsp;|&nbsp; {{ from_email }}
+            </td>
+            <td align="right" style="font-size:11px;color:#aaaaaa;">
+              Includes PDF attachment
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+  </table>
+  <!-- end outer wrapper -->
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

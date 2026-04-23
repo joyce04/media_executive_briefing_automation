@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="{{ org.language_primary | default('en') }}">
+<head>
+<meta charset="UTF-8" />
+<title>{{ org.name_short | default('Daily') }} Briefing — {{ run_date }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  /* ─── PAGE SETUP ─── */
+  @page {
+    size: A4;
+    margin: 2cm 2cm 2.5cm 2cm;
+    @bottom-center {
+      content: "{{ org.name_short | default('Briefing') }}  ·  " counter(page) " / " counter(pages);
+      font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+      font-size: 8pt;
+      color: #888888;
+    }
+  }
+
+  @page :first {
+    @bottom-center { content: none; }
+  }
+
+  /* ─── BASE ─── */
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.55;
+    color: #222222;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+
+  a { color: {{ org.primary_color | default('#1a56db') }}; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ─── HEADER ─── */
+  .pdf-header {
+    border-bottom: 3pt solid {{ org.primary_color | default('#1a56db') }};
+    padding-bottom: 10pt;
+    margin-bottom: 14pt;
+  }
+
+  .pdf-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .pdf-title-block .org-name {
+    font-size: 8pt;
+    color: #888888;
+    letter-spacing: 0.8pt;
+    text-transform: uppercase;
+    margin-bottom: 3pt;
+  }
+
+  .pdf-title-block h1 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: {{ org.primary_color | default('#1a56db') }};
+    margin: 0 0 2pt 0;
+    line-height: 1.2;
+  }
+
+  .pdf-title-block .subtitle {
+    font-size: 11pt;
+    font-weight: 400;
+    color: #555555;
+    margin: 0;
+  }
+
+  .pdf-date-block {
+    text-align: right;
+    font-size: 9pt;
+    color: #555555;
+  }
+
+  .pdf-date-block .date-label {
+    font-size: 8pt;
+    color: #888888;
+    margin-bottom: 2pt;
+  }
+
+  .pdf-date-block .date-value {
+    font-size: 14pt;
+    font-weight: 700;
+    color: {{ org.primary_color | default('#1a56db') }};
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: flex;
+    background-color: {{ org.primary_color | default('#1a56db') }};
+    color: #ffffff;
+    border-radius: 3pt;
+    padding: 8pt 0;
+    margin-bottom: 16pt;
+    page-break-inside: avoid;
+  }
+
+  .stat-cell {
+    flex: 1;
+    text-align: center;
+    border-right: 1pt solid rgba(255,255,255,0.2);
+    padding: 0 8pt;
+  }
+
+  .stat-cell:last-child { border-right: none; }
+
+  .stat-number {
+    font-size: 18pt;
+    font-weight: 700;
+    line-height: 1.1;
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 7.5pt;
+    color: rgba(255,255,255,0.7);
+    display: block;
+    margin-top: 2pt;
+  }
+
+  .stat-new .stat-number    { color: #66ccff; }
+  .stat-dev .stat-number    { color: #ffcc44; }
+  .stat-cont .stat-number   { color: #aaaaaa; }
+  .stat-res .stat-number    { color: #88cc88; }
+
+  /* ─── ALERT BOX ─── */
+  .alert-box {
+    border: 2pt solid #CC0000;
+    border-left: 6pt solid #CC0000;
+    background-color: #fff5f5;
+    padding: 10pt 14pt;
+    margin-bottom: 14pt;
+    page-break-inside: avoid;
+    border-radius: 2pt;
+  }
+
+  .alert-label {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #CC0000;
+    letter-spacing: 0.8pt;
+    text-transform: uppercase;
+    margin-bottom: 4pt;
+  }
+
+  .alert-title {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #CC0000;
+    margin-bottom: 3pt;
+  }
+
+  .alert-action {
+    font-size: 9.5pt;
+    color: #333333;
+    background-color: #ffdede;
+    padding: 6pt 10pt;
+    border-radius: 2pt;
+  }
+
+  /* ─── SECTION HEADINGS ─── */
+  .section {
+    margin-bottom: 18pt;
+    page-break-inside: avoid;
+  }
+
+  .section-heading {
+    border-bottom: 1.5pt solid {{ org.primary_color | default('#1a56db') }};
+    padding-bottom: 4pt;
+    margin-bottom: 10pt;
+  }
+
+  .section-heading h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: {{ org.primary_color | default('#1a56db') }};
+    margin: 0;
+    display: inline;
+  }
+
+  .section-heading .sub-label {
+    font-size: 9.5pt;
+    color: #666666;
+    margin-left: 8pt;
+  }
+
+  .section-heading.developing h2 { color: #CC6600; }
+  .section-heading.developing { border-color: #CC6600; }
+  .section-heading.continuing h2 { color: #555555; }
+  .section-heading.continuing { border-color: #888888; }
+  .section-heading.resolved h2 { color: #006633; }
+  .section-heading.resolved { border-color: #006633; }
+
+  /* ─── EXECUTIVE SUMMARY ─── */
+  .summary-primary {
+    font-size: 9.5pt;
+    line-height: 1.65;
+    color: #222222;
+    margin-bottom: 8pt;
+  }
+
+  .summary-secondary {
+    font-size: 9pt;
+    line-height: 1.55;
+    color: #555555;
+    font-style: italic;
+    border-top: 0.5pt dashed #cccccc;
+    padding-top: 8pt;
+  }
+
+  /* ─── TRENDING NARRATIVES ─── */
+  .narrative-item {
+    display: flex;
+    padding: 8pt 0;
+    border-bottom: 0.5pt solid #eeeeee;
+    page-break-inside: avoid;
+  }
+
+  .narrative-num {
+    min-width: 20pt;
+    width: 20pt;
+    height: 20pt;
+    background-color: {{ org.primary_color | default('#1a56db') }};
+    color: #ffffff;
+    font-size: 8pt;
+    font-weight: 700;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20pt;
+    margin-right: 8pt;
+    flex-shrink: 0;
+  }
+
+  .narrative-content { flex: 1; }
+
+  .narrative-title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #222222;
+    margin-bottom: 4pt;
+  }
+
+  .narrative-desc {
+    font-size: 9pt;
+    color: #333333;
+    line-height: 1.45;
+    margin-bottom: 3pt;
+  }
+
+  .narrative-count {
+    font-size: 8pt;
+    color: #888888;
+  }
+
+  /* ─── RECOMMENDED ACTIONS ─── */
+  .action-row {
+    display: flex;
+    padding: 7pt 0;
+    border-bottom: 0.5pt solid #eeeeee;
+    page-break-inside: avoid;
+    align-items: flex-start;
+  }
+
+  .priority-badge {
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2pt 5pt;
+    border-radius: 2pt;
+    margin-right: 10pt;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .priority-high { background-color: #CC0000; color: #ffffff; }
+  .priority-medium { background-color: #CC6600; color: #ffffff; }
+  .priority-low { background-color: #888888; color: #ffffff; }
+
+  .action-text { font-size: 9.5pt; color: #222222; margin-bottom: 2pt; }
+
+  /* ─── ARTICLE TABLES ─── */
+  table.article-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+    margin-bottom: 0;
+  }
+
+  table.article-table th {
+    background-color: {{ org.primary_color | default('#1a56db') }};
+    color: #ffffff;
+    padding: 5pt 7pt;
+    text-align: left;
+    font-weight: 600;
+    font-size: 8pt;
+  }
+
+  table.article-table.developing th { background-color: #CC6600; }
+
+  table.article-table td {
+    padding: 7pt 7pt;
+    border-bottom: 0.5pt solid #dddddd;
+    vertical-align: top;
+  }
+
+  .article-title-cell a { font-weight: 600; color: {{ org.primary_color | default('#1a56db') }}; }
+  .article-title-cell .pub-date { font-size: 7.5pt; color: #888888; margin-top: 2pt; }
+  .article-title-cell .days-active { font-size: 7.5pt; color: #CC6600; margin-top: 1pt; }
+
+  .badge-crisis     { color: #CC0000; font-weight: 700; }
+  .badge-concern    { color: #CC6600; font-weight: 700; }
+  .badge-opportunity{ color: #006633; font-weight: 700; }
+  .badge-neutral    { color: #888888; }
+
+  .score-high { font-weight: 700; color: {{ org.primary_color | default('#1a56db') }}; }
+  .score-med  { color: #555555; }
+  .score-low  { color: #aaaaaa; }
+
+  /* ─── COMPACT LIST (continuing / resolved) ─── */
+  .compact-list { list-style: none; margin: 0; padding: 0; }
+
+  .compact-list li {
+    font-size: 8.5pt;
+    color: #666666;
+    padding: 4pt 0;
+    border-bottom: 0.5pt solid #eeeeee;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .compact-list li .item-num { color: #aaaaaa; margin-right: 6pt; flex-shrink: 0; }
+  .compact-list li a { color: #555555; }
+  .compact-list li .days-tag { color: #aaaaaa; font-size: 8pt; margin-left: 6pt; flex-shrink: 0; }
+
+  /* ─── PAGE BREAKS ─── */
+  .page-break { page-break-before: always; }
+  .avoid-break { page-break-inside: avoid; }
+
+  /* ─── FOOTER ─── */
+  .pdf-footer {
+    margin-top: 24pt;
+    border-top: 0.5pt solid #cccccc;
+    padding-top: 8pt;
+    font-size: 8pt;
+    color: #888888;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- HEADER                                                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="pdf-header avoid-break">
+    <div class="pdf-header-top">
+      <div class="pdf-title-block">
+        <div class="org-name">{{ org.name | default('') }}</div>
+        <h1>Daily Briefing</h1>
+        <p class="subtitle">Media Intelligence Report</p>
+      </div>
+      <div class="pdf-date-block">
+        <div class="date-label">Report Date</div>
+        <div class="date-value">{{ run_date }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- STATS BAR                                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="stats-bar avoid-break">
+    <div class="stat-cell">
+      <span class="stat-number">{{ total_analyzed }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-cell stat-new">
+      <span class="stat-number">{{ new_count }}</span>
+      <span class="stat-label">New</span>
+    </div>
+    <div class="stat-cell stat-dev">
+      <span class="stat-number">{{ developing_count }}</span>
+      <span class="stat-label">Developing</span>
+    </div>
+    <div class="stat-cell stat-cont">
+      <span class="stat-number">{{ continuing_count }}</span>
+      <span class="stat-label">Continuing</span>
+    </div>
+    <div class="stat-cell stat-res">
+      <span class="stat-number">{{ resolved_count }}</span>
+      <span class="stat-label">Resolved</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- EXECUTIVE SUMMARY                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-heading">
+      <h2>Executive Summary</h2>
+    </div>
+
+    {% if executive_summary %}
+    <ul class="summary-primary" style="margin:0;padding-left:16pt;">
+      {% for item in executive_summary %}
+      <li style="margin-bottom:4pt;">{{ item }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if executive_summary_en and executive_summary_en != executive_summary %}
+    <ul class="summary-secondary" style="margin:0;padding-left:16pt;">
+      {% for item in executive_summary_en %}
+      <li style="margin-bottom:3pt;">{{ item }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- TRENDING NARRATIVES                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  {% if trending_narratives %}
+  <div class="section">
+    <div class="section-heading">
+      <h2>Top Trending Narratives</h2>
+    </div>
+    {% for narrative in trending_narratives %}
+    <div class="narrative-item avoid-break">
+      <div class="narrative-num">{{ loop.index }}</div>
+      <div class="narrative-content">
+        <div class="narrative-title">{{ narrative.title | default('') }}</div>
+        {% if narrative.description %}
+        <div class="narrative-desc">{{ narrative.description }}</div>
+        {% endif %}
+        {% if narrative.supporting_articles %}
+        <div style="margin-top:4pt;">
+          {% for art in narrative.supporting_articles %}
+          <div style="font-size:8pt;color:#555555;margin-bottom:2pt;">
+            &#8227; <a href="{{ art.url }}">{{ art.title }}</a>
+          </div>
+          {% endfor %}
+        </div>
+        {% elif narrative.article_count is defined %}
+        <div class="narrative-count">Articles: {{ narrative.article_count }}</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- NEW ARTICLES                                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  {% if new_articles %}
+  <div class="section page-break">
+    <div class="section-heading">
+      <h2>[NEW]</h2>
+      <span class="sub-label">{{ new_count }} articles</span>
+    </div>
+    <table class="article-table">
+      <thead>
+        <tr>
+          <th style="width:40%;">Title</th>
+          <th style="width:50%;">Summary</th>
+          <th style="width:5%;text-align:center;">Risk</th>
+          <th style="width:5%;text-align:center;">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in new_articles %}
+        <tr class="avoid-break">
+          <td class="article-title-cell">
+            {% if article.url %}
+            <a href="{{ article.url }}">{{ article.title }}</a>
+            {% else %}
+            <strong>{{ article.title }}</strong>
+            {% endif %}
+            {% if article.published_at %}
+            <div class="pub-date">{{ article.published_at }}</div>
+            {% endif %}
+          </td>
+          <td style="font-size:8.5pt;color:#333333;line-height:1.45;">{{ article.summary_primary | default('') }}</td>
+          <td style="text-align:center;">
+            {% set risk = article.risk_flag | default('neutral') | lower %}
+            {% if risk == 'crisis' %}
+              <span class="badge-crisis">&#9888;</span>
+            {% elif risk == 'concern' %}
+              <span class="badge-concern">&#9650;</span>
+            {% elif risk == 'opportunity' %}
+              <span class="badge-opportunity">&#9654;</span>
+            {% else %}
+              <span class="badge-neutral">—</span>
+            {% endif %}
+          </td>
+          <td style="text-align:center;">
+            {% set s = article.relevance_score | default(5) | int %}
+            {% if s >= 8 %}
+              <span class="score-high">{{ s }}</span>
+            {% elif s >= 5 %}
+              <span class="score-med">{{ s }}</span>
+            {% else %}
+              <span class="score-low">{{ s }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- DEVELOPING ARTICLES                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  {% if developing_articles %}
+  <div class="section {% if new_articles %}page-break{% endif %}">
+    <div class="section-heading developing">
+      <h2>[DEVELOPING]</h2>
+      <span class="sub-label">{{ developing_count }} articles</span>
+    </div>
+    <table class="article-table developing">
+      <thead>
+        <tr>
+          <th style="width:30%;">Title</th>
+          <th style="width:35%;">Summary (Primary)</th>
+          <th style="width:25%;">Summary (Secondary)</th>
+          <th style="width:5%;text-align:center;">Risk</th>
+          <th style="width:5%;text-align:center;">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in developing_articles %}
+        <tr class="avoid-break">
+          <td class="article-title-cell">
+            {% if article.url %}
+            <a href="{{ article.url }}">{{ article.title }}</a>
+            {% else %}
+            <strong>{{ article.title }}</strong>
+            {% endif %}
+            {% if article.published_at %}
+            <div class="pub-date">{{ article.published_at }}</div>
+            {% endif %}
+            {% if article.days_active and article.days_active > 1 %}
+            <div class="days-active">Day {{ article.days_active }}</div>
+            {% endif %}
+          </td>
+          <td style="font-size:8.5pt;color:#333333;line-height:1.45;">{{ article.summary_primary | default('') }}</td>
+          <td style="font-size:8pt;color:#555555;font-style:italic;line-height:1.4;">{{ article.summary_secondary | default('') }}</td>
+          <td style="text-align:center;">
+            {% set risk = article.risk_flag | default('neutral') | lower %}
+            {% if risk == 'crisis' %}
+              <span class="badge-crisis">&#9888;</span>
+            {% elif risk == 'concern' %}
+              <span class="badge-concern">&#9650;</span>
+            {% elif risk == 'opportunity' %}
+              <span class="badge-opportunity">&#9654;</span>
+            {% else %}
+              <span class="badge-neutral">—</span>
+            {% endif %}
+          </td>
+          <td style="text-align:center;">
+            {% set s = article.relevance_score | default(5) | int %}
+            {% if s >= 8 %}
+              <span class="score-high">{{ s }}</span>
+            {% elif s >= 5 %}
+              <span class="score-med">{{ s }}</span>
+            {% else %}
+              <span class="score-low">{{ s }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CONTINUING ARTICLES                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  {% if continuing_articles %}
+  <div class="section">
+    <div class="section-heading continuing">
+      <h2>[CONTINUING]</h2>
+      <span class="sub-label">{{ continuing_count }} articles — detailed analysis omitted</span>
+    </div>
+    <ul class="compact-list">
+      {% for article in continuing_articles %}
+      <li class="avoid-break">
+        <span class="item-num">{{ loop.index }}.</span>
+        {% if article.url %}
+        <a href="{{ article.url }}">{{ article.title }}</a>
+        {% else %}
+        {{ article.title }}
+        {% endif %}
+        <span class="days-tag">— Day {{ article.days_active | default(1) }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- RESOLVED ARTICLES                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  {% if resolved_articles %}
+  <div class="section">
+    <div class="section-heading resolved">
+      <h2>[RESOLVED]</h2>
+      <span class="sub-label">{{ resolved_count }} articles</span>
+    </div>
+    <ul class="compact-list">
+      {% for article in resolved_articles %}
+      <li class="avoid-break">
+        <span class="item-num">{{ loop.index }}.</span>
+        {% if article.url %}
+        <a href="{{ article.url }}" style="color:#888888;">{{ article.title }}</a>
+        {% else %}
+        <span style="color:#888888;">{{ article.title }}</span>
+        {% endif %}
+        <span class="days-tag">— closed after {{ article.days_active | default(1) }}d</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="pdf-footer">
+    {{ org.name | default('Media Intelligence') }} &nbsp;·&nbsp; Automatically Generated &nbsp;·&nbsp; {{ run_date }}
+  </div>
+
+</body>
+</html>

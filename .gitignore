@@ -1,0 +1,22 @@
+.env
+logs/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+.DS_Store
+
+# Generated report outputs
+reports/*.html
+reports/*.pdf
+data/reports/
+data/checkpoints/
+
+# SQLite databases (keep only .gitkeep placeholders)
+data/*.db
