@@ -1,0 +1,97 @@
+name: Weekly Tactics Intelligence Pipeline
+
+on:
+  schedule:
+    # Tuesday 06:00 KST = Monday 21:00 UTC
+    - cron: "0 21 * * 1"
+  workflow_dispatch:
+    inputs:
+      week_start:
+        description: "Week start date (YYYY-MM-DD). Leave blank for auto (7 days before today KST)."
+        required: false
+        default: ""
+      dry_run:
+        description: "Skip email delivery (dry run)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  run-tactics-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write  # required to commit DB and reports back to the repo
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      KFA_TACTICS_EMAIL_TO_1: ${{ secrets.KFA_TACTICS_EMAIL_TO_1 }}
+      KFA_EMAIL_BCC_1: ${{ secrets.KFA_EMAIL_BCC_1 }}
+      DATABASE_PATH: ./data/kfa_intel.db
+      REPORTS_OUTPUT_DIR: ./reports/
+      TIMEZONE: Asia/Seoul
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install WeasyPrint system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libpango-1.0-0 \
+            libpangoft2-1.0-0 \
+            libgdk-pixbuf2.0-0 \
+            libffi-dev \
+            shared-mime-info
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Initialise databases
+        # Idempotent — only creates tables that are missing (both daily and tactics DBs)
+        run: uv run kfa-init-db
+
+      - name: Run tactics pipeline
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.week_start }}" ]; then
+            ARGS="$ARGS --week-start ${{ github.event.inputs.week_start }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          uv run kfa-tactics-pipeline $ARGS
+
+      - name: Commit and push outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.db reports/tactics/*.html
+          if git diff --cached --quiet; then
+            echo "Nothing changed — skipping commit."
+          else
+            git commit -m "chore: tactics pipeline run $(date -u +'%Y-%m-%d')"
+            for i in 1 2 3; do
+              git pull --rebase origin main
+              git push && break
+              sleep 5
+            done
+          fi

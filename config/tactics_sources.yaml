@@ -1,0 +1,63 @@
+sources:
+  # ── Premier League (GNews — 100 items, recent PL news) ──────────────────────
+  - id: premier_league_news
+    type: google_news_rss
+    query: "site:premierleague.com"
+    language: en
+    gl: GB
+    ceid: GB:en
+    priority: medium
+
+  # ── Spielverlagerung (RSS only — GNews returns stale 2017 articles) ─────────
+  # Low frequency: ~1-3 articles/month, but high quality tactical deep-dives
+  - id: spielverlagerung_rss
+    type: rss
+    url: "https://spielverlagerung.com/feed"
+    language: en
+    priority: high
+
+  # ── Between The Posts (RSS only — 10 items, daily match reports) ────────────
+  - id: betweentheposts_rss
+    type: rss
+    url: "https://betweentheposts.net/feed"
+    language: en
+    priority: high
+
+  # ── Total Football Analysis (GNews + RSS — 50/10 items, daily output) ───────
+  - id: total_football_analysis
+    type: google_news_rss
+    query: "site:totalfootballanalysis.com"
+    language: en
+    gl: GB
+    ceid: GB:en
+    priority: high
+
+  # ── Breaking The Lines (RSS only — 6 items, in-depth tactical essays) ───────
+  - id: breakingthelines_rss
+    type: rss
+    url: "https://breakingthelines.com/feed"
+    language: en
+    priority: high
+
+  # ── The Mastermind Site (RSS only — GNews returns tag pages, not articles) ──
+  - id: themastermindsite_rss
+    type: rss
+    url: "https://themastermindsite.com/feed"
+    language: en
+    priority: high
+
+  # ── Tactalyse (RSS — 12 items, last updated 2024, low activity) ─────────────
+  - id: tactalyse_rss
+    type: rss
+    url: "https://tactalyse.com/feed"
+    language: en
+    priority: low
+
+  # ── The Analyst / Opta (GNews — 20 items, match stats & analysis) ───────────
+  - id: theanalyst
+    type: google_news_rss
+    query: "site:theanalyst.com football analysis"
+    language: en
+    gl: GB
+    ceid: GB:en
+    priority: high

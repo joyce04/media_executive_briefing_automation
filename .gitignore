@@ -21,6 +21,9 @@ data/checkpoints/
 # SQLite databases (keep only .gitkeep placeholders)
 data/*.db
 
+# Tactics pipeline outputs
+data/reports/tactics/
+
 # Claude Code local-only state
 .claude/settings.local.json
 .claude/worktrees/

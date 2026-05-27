@@ -1,0 +1,8 @@
+# Tactics pipeline recipients — support ${ENV_VAR} interpolation
+to:
+  - name: ""
+    email: "${KFA_TACTICS_EMAIL_TO_1}"
+bcc:
+  - name: "tester"
+    email: "${KFA_EMAIL_BCC_1}"
+subject_template: "[축구 전술 분석] {week_start} ~ {week_end}"
