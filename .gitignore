@@ -20,3 +20,7 @@ data/checkpoints/
 
 # SQLite databases (keep only .gitkeep placeholders)
 data/*.db
+
+# Claude Code local-only state
+.claude/settings.local.json
+.claude/worktrees/
