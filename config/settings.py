@@ -1,9 +1,10 @@
 import os
 import re
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
-from pathlib import Path
+from typing import Literal
+
 from dotenv import load_dotenv
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
@@ -24,8 +25,13 @@ def _interpolate_env(obj):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    openrouter_api_key: str = Field(..., alias="OPENROUTER_API_KEY")
-    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    # --- LLM backend selection (this variant runs against Claude subscription) ---
+    # "auto"      : try agent_sdk -> cli -> api_key in order (default; recommended)
+    # "agent_sdk" : force claude-agent-sdk (Pro/Max OAuth)
+    # "cli"       : force raw `claude -p` subprocess
+    # "api_key"   : force anthropic SDK with ANTHROPIC_API_KEY
+    llm_backend: Literal["auto", "agent_sdk", "cli", "api_key"] = Field("auto", alias="LLM_BACKEND")
+    anthropic_api_key: str = Field("", alias="ANTHROPIC_API_KEY")
 
     naver_client_id: str = Field("", alias="NAVER_CLIENT_ID")
     naver_client_secret: str = Field("", alias="NAVER_CLIENT_SECRET")
@@ -35,7 +41,7 @@ class Settings(BaseSettings):
     smtp_user: str = Field("", alias="SMTP_USER")
     smtp_password: str = Field("", alias="SMTP_PASSWORD")
 
-    database_path: str = Field("./data/media_intel.db", alias="DATABASE_PATH")
+    database_path: str = Field("./data/media_intel_local.db", alias="DATABASE_PATH")
     reports_output_dir: str = Field("./data/reports", alias="REPORTS_OUTPUT_DIR")
     log_level: str = Field("INFO", alias="LOG_LEVEL")
 
@@ -47,10 +53,12 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = Field("", alias="STRIPE_WEBHOOK_SECRET")
     frontend_url: str = Field("http://localhost:3000", alias="FRONTEND_URL")
 
-    # Model names via OpenRouter
-    haiku_model: str = "anthropic/claude-haiku-4-5"
-    sonnet_model: str = "anthropic/claude-sonnet-4-6"
-    opus_model: str = "anthropic/claude-opus-4-7"
+    # Model names -- Anthropic direct IDs (no OpenRouter prefix).
+    # The agent_sdk and cli backends accept these short names; the api_key
+    # backend forwards them to anthropic.messages.create() unchanged.
+    haiku_model: str = "claude-haiku-4-5"
+    sonnet_model: str = "claude-sonnet-4-6"
+    opus_model: str = "claude-opus-4-7"
 
     # Pipeline thresholds
     novelty_lookback_days: int = 7

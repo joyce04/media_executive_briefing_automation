@@ -1,8 +1,12 @@
-# Media Intelligence
+# Media Intelligence — Local (Claude subscription variant)
 
 ![Python 3.13+](https://img.shields.io/badge/Python-3.13%2B-blue)
 ![LangGraph](https://img.shields.io/badge/LangGraph-0.2%2B-purple)
-![OpenRouter](https://img.shields.io/badge/OpenRouter-Claude-orange)
+![Claude Agent SDK](https://img.shields.io/badge/LLM-claude--agent--sdk-orange)
+
+> **This is the local Claude-subscription variant.** All LLM calls route through `claude-agent-sdk` against your Claude Pro/Max OAuth credentials (subscription-billed), with a `claude -p` subprocess fallback and an `ANTHROPIC_API_KEY` escape hatch. Configure via `LLM_BACKEND` in `.env`.
+>
+> For the production OpenRouter version, see `/Users/g/workspace/kfa_daily_media_intel/`. The two repos share code shape but maintain isolated `data/` directories so local experiments cannot corrupt the production DB.
 
 Automated daily executive media briefing service. Configure any organization, point it at news sources, and receive a daily AI-curated intelligence report — filtered, deduplicated, classified by novelty, analyzed for sentiment and risk, and synthesized into an executive summary — delivered by email with a PDF attachment.
 

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Multi-tenant daily media intelligence briefing pipeline. One SQLite database serves multiple organizations; each org has its own sources, entity watchlist, model tier, schedule, and recipient list. Each run collects news, dedupes, classifies novelty against prior days, analyzes per-article, synthesizes an executive briefing, and emails an HTML + PDF report.
 
-All LLM calls route through **OpenRouter** (`langchain_openai.ChatOpenAI` pointed at OpenRouter's base URL). For a sibling fork that uses `claude-agent-sdk` against a Claude Pro/Max subscription instead, see `/Users/g/workspace/kfa_daily_media_intel_local/`.
+**This is the local Claude-subscription variant.** LLM calls route through `claude-agent-sdk` (subscription OAuth via the `claude` CLI), with a `claude -p` subprocess fallback and an `ANTHROPIC_API_KEY` escape hatch. Backend selection lives in `agents/llm_client.py::_resolve_backend()`, controlled by `LLM_BACKEND` in `.env`. For the production OpenRouter version, see `/Users/g/workspace/kfa_daily_media_intel/`.
 
 ## Commands
 
