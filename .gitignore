@@ -18,9 +18,6 @@ reports/*.pdf
 data/reports/
 data/checkpoints/
 
-# SQLite databases (keep only .gitkeep placeholders)
-data/*.db
-
 # Tactics pipeline outputs
 data/reports/tactics/
 
